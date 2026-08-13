@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  fullName     String
+  passwordHash String
+  role         String   @default("SuperAdmin")
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id           Int            @id @default(autoincrement())
+  name         String
+  slug         String         @unique
+  description  String         @default("")
+  order        Int            @default(0)
+  articles     NewsArticle[]
+}
+
+model NewsArticle {
+  id               Int       @id @default(autoincrement())
+  title            String
+  slug             String    @unique
+  shortDescription String
+  content          String
+  coverImageUrl    String?
+  additionalImages String[]  @default([])
+  categoryId       Int
+  category         Category  @relation(fields: [categoryId], references: [id])
+  author           String?
+  sourceUrl        String?
+  videoUrl         String?
+  status           Int       @default(0)
+  isFeatured       Boolean   @default(false)
+  tags             String[]  @default([])
+  viewCount        Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  publishedAt      DateTime  @default(now())
+}
+
+model SiteSetting {
+  id           Int    @id @default(autoincrement())
+  key          String @unique
+  value        String
+}
