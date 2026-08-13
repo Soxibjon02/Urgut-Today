@@ -7,19 +7,24 @@ async function main() {
   console.log('🌱 Seed data yuklanmoqda...')
 
   // Admin user
-  const existing = await prisma.user.findUnique({ where: { email: 'admin@urguttoday.uz' } })
-  if (!existing) {
-    const hash = await bcrypt.hash('Admin@123456', 12)
-    await prisma.user.create({
-      data: {
-        email: 'admin@urguttoday.uz',
-        fullName: 'Urgut Today Admin',
-        passwordHash: hash,
-        role: 'SuperAdmin',
-      },
-    })
-    console.log('✅ Admin user yaratildi')
-  }
+  const adminEmail = 'soxibgaybullayev439@gmail.com'
+  const hash = await bcrypt.hash('s0x1bj0nurguttoday', 12)
+
+  await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: {
+      passwordHash: hash,
+      fullName: 'Soxibjon Gaybullayev',
+      role: 'SuperAdmin',
+    },
+    create: {
+      email: adminEmail,
+      fullName: 'Soxibjon Gaybullayev',
+      passwordHash: hash,
+      role: 'SuperAdmin',
+    },
+  })
+  console.log('✅ Admin user soxibgaybullayev439@gmail.com muvaffaqiyatli saqlandi')
 
   // Categories
   const catCount = await prisma.category.count()

@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@urguttoday.uz"
+                placeholder="soxibgaybullayev439@gmail.com"
                 className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-xs font-semibold focus:outline-none focus:border-red-700"
               />
               <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
