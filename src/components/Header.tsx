@@ -86,15 +86,15 @@ export default function Header() {
       <div className="topbar text-xs py-1.5 px-4 hidden md:block">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <span className="capitalize font-medium text-slate-400 dark:text-slate-500">{todayDate}</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-slate-300 dark:text-slate-400 font-semibold">{settings.subtitle}</span>
+            <span className="capitalize font-medium" style={{color:'var(--text-topbar-subtle)'}}>{todayDate}</span>
+            <span style={{color:'var(--border-dark)'}}>|</span>
+            <span className="font-semibold" style={{color:'var(--text-topbar)'}}>{settings.subtitle}</span>
           </div>
-          <div className="flex items-center gap-4 text-slate-300 dark:text-slate-400">
-            <a href={`tel:${settings.phone}`} className="flex items-center gap-1 hover:text-white transition-colors">
+          <div className="flex items-center gap-4">
+            <a href={`tel:${settings.phone}`} className="flex items-center gap-1 transition-colors hover:text-red-600 dark:hover:text-white" style={{color:'var(--text-topbar)'}}>
               <Phone className="w-3 h-3" />{settings.phone}
             </a>
-            <Link href="/admin/login" className="flex items-center gap-1 text-slate-400 hover:text-amber-400 transition-colors">
+            <Link href="/admin/login" className="flex items-center gap-1 transition-colors hover:text-amber-500" style={{color:'var(--text-topbar-subtle)'}}>
               <ShieldCheck className="w-3.5 h-3.5" />Admin Kirish
             </Link>
           </div>
