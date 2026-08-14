@@ -13,6 +13,13 @@ export const metadata: Metadata = {
   description:
     "Urgut tumani va Samarqand viloyati bo'yicha eng so'nggi yangiliklar, e'lonlar va muhim ma'lumotlar.",
   keywords: "Urgut, Urgut tumani, Samarqand, yangiliklar, xabarlar",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     title: "Urgut Today",
     description: "Urgut tumani mahalliy yangiliklar portali",
