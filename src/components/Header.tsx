@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, Search, Phone, ShieldCheck } from 'lucide-react'
+import { Menu, X, Search, Phone, ShieldCheck, Sun, Moon } from 'lucide-react'
+import { useTheme } from 'next-themes'
 
 interface Category {
   id: number
@@ -17,6 +18,29 @@ interface SiteSettings {
   logoText: string
   subtitle: string
   phone: string
+}
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
+  if (!mounted) return <div className="w-9 h-9" />
+
+  const isDark = theme === 'dark'
+  return (
+    <button
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="theme-toggle bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
+      aria-label={isDark ? "Kunduzgi rejim" : "Tungi rejim"}
+      title={isDark ? "Kunduzgi rejim" : "Tungi rejim"}
+    >
+      {isDark
+        ? <Sun className="w-4 h-4 text-amber-400" />
+        : <Moon className="w-4 h-4 text-slate-600" />
+      }
+    </button>
+  )
 }
 
 export default function Header() {
@@ -57,16 +81,16 @@ export default function Header() {
   })
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+    <header className="site-header sticky top-0 z-40 shadow-sm">
       {/* Top Utility Bar */}
-      <div className="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 hidden md:block">
+      <div className="topbar text-xs py-1.5 px-4 hidden md:block">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <span className="capitalize font-medium text-slate-400">{todayDate}</span>
+            <span className="capitalize font-medium text-slate-400 dark:text-slate-500">{todayDate}</span>
             <span className="text-slate-600">|</span>
-            <span className="text-slate-300 font-semibold">{settings.subtitle}</span>
+            <span className="text-slate-300 dark:text-slate-400 font-semibold">{settings.subtitle}</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 text-slate-300 dark:text-slate-400">
             <a href={`tel:${settings.phone}`} className="flex items-center gap-1 hover:text-white transition-colors">
               <Phone className="w-3 h-3" />{settings.phone}
             </a>
@@ -80,13 +104,16 @@ export default function Header() {
       {/* Main Header */}
       <div className="max-w-7xl mx-auto px-4 py-3 md:py-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 -ml-2 rounded-md text-slate-700 hover:bg-slate-100 lg:hidden">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 -ml-2 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden transition-colors"
+          >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
           <Link href="/" className="flex items-center gap-2 group">
             <div className="w-9 h-9 md:w-11 md:h-11 rounded-lg bg-red-700 text-white flex items-center justify-center font-black text-xl shadow-md group-hover:bg-red-800 transition-colors">UT</div>
             <div className="flex flex-col">
-              <span className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 leading-none group-hover:text-red-700 transition-colors">
+              <span className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-none group-hover:text-red-700 transition-colors">
                 {settings.logoText || 'URGUT TODAY'}
               </span>
               <span className="text-[10px] font-bold tracking-widest text-red-700 uppercase mt-0.5">Samarqand • Urgut tumani</span>
@@ -95,28 +122,33 @@ export default function Header() {
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-6 text-sm font-bold text-slate-800">
+        <nav className="hidden lg:flex items-center gap-6 text-sm font-bold text-slate-800 dark:text-slate-200">
           <Link href="/" className="hover:text-red-700 transition-colors">Bosh sahifa</Link>
-          <Link href="/latest" className="hover:text-red-700 transition-colors">Eng so'nggi</Link>
-          {categories.slice(0, 6).map(cat => (
-            <Link key={cat.id} href={`/category/${cat.slug}`} className="hover:text-red-700 transition-colors">{cat.name}</Link>
+          <Link href="/latest" className="hover:text-red-700 transition-colors">Eng so&apos;nggi</Link>
+          {categories.slice(0, 5).map(cat => (
+            <Link key={cat.id} href={`/category/${cat.slug}`} className="hover:text-red-700 dark:hover:text-red-400 transition-colors">{cat.name}</Link>
           ))}
           <Link href="/about" className="hover:text-red-700 transition-colors">Biz haqimizda</Link>
         </nav>
 
         <div className="flex items-center gap-2">
-          <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="p-2 rounded-full text-slate-700 hover:bg-slate-100 transition-colors" aria-label="Qidirish">
+          <button
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            className="p-2 rounded-full text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            aria-label="Qidirish"
+          >
             <Search className="w-5 h-5" />
           </button>
+          <ThemeToggle />
         </div>
       </div>
 
       {/* Category Bar */}
-      <div className="hidden lg:block bg-slate-100 border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-6 overflow-x-auto text-xs font-semibold text-slate-700">
+      <div className="hidden lg:block catbar">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-6 overflow-x-auto text-xs font-semibold text-slate-700 dark:text-slate-300">
           <span className="font-bold text-red-700 uppercase shrink-0">Kategoriyalar:</span>
           {categories.map(cat => (
-            <Link key={cat.id} href={`/category/${cat.slug}`} className="hover:text-red-700 whitespace-nowrap transition-colors">
+            <Link key={cat.id} href={`/category/${cat.slug}`} className="hover:text-red-700 dark:hover:text-red-400 whitespace-nowrap transition-colors">
               {cat.name} ({cat.articleCount})
             </Link>
           ))}
@@ -125,7 +157,7 @@ export default function Header() {
 
       {/* Search Bar */}
       {isSearchOpen && (
-        <div className="bg-slate-900 text-white p-4 border-t border-slate-800">
+        <div className="bg-slate-900 dark:bg-slate-950 text-white p-4 border-t border-slate-800">
           <form onSubmit={handleSearch} className="max-w-3xl mx-auto flex gap-2">
             <input
               type="text"
@@ -133,7 +165,7 @@ export default function Header() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               autoFocus
-              className="flex-1 bg-slate-800 border border-slate-700 rounded-md px-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-red-500"
+              className="flex-1 bg-slate-800 dark:bg-slate-900 border border-slate-700 rounded-md px-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-red-500"
             />
             <button type="submit" className="bg-red-700 hover:bg-red-800 px-5 py-2 rounded-md font-bold text-sm transition-colors flex items-center gap-1">
               <Search className="w-4 h-4" /> Qidirish
@@ -147,40 +179,43 @@ export default function Header() {
 
       {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex">
-          <div className="w-4/5 max-w-sm bg-white h-full flex flex-col justify-between p-6 shadow-2xl">
+        <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm flex">
+          <div className="mobile-drawer w-4/5 max-w-sm h-full flex flex-col justify-between p-6 shadow-2xl">
             <div>
-              <div className="flex justify-between items-center pb-4 border-b border-slate-200 mb-4">
+              <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-700 mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded bg-red-700 text-white flex items-center justify-center font-bold">UT</div>
-                  <span className="font-extrabold text-slate-900">{settings.logoText}</span>
+                  <span className="font-extrabold text-slate-900 dark:text-slate-100">{settings.logoText}</span>
                 </div>
-                <button onClick={() => setIsMenuOpen(false)} className="p-1 rounded-md text-slate-500 hover:bg-slate-100">
-                  <X className="w-6 h-6" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <ThemeToggle />
+                  <button onClick={() => setIsMenuOpen(false)} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
-              <nav className="flex flex-col gap-2 font-bold text-slate-800 text-base">
-                <Link href="/" className="px-3 py-2 rounded-md hover:bg-slate-100 hover:text-red-700">Bosh sahifa</Link>
-                <Link href="/latest" className="px-3 py-2 rounded-md hover:bg-slate-100 hover:text-red-700">Eng so'nggi yangiliklar</Link>
-                <div className="my-2 border-t border-slate-100 pt-2">
+              <nav className="flex flex-col gap-2 font-bold text-slate-800 dark:text-slate-200 text-base">
+                <Link href="/" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-700 transition-colors">Bosh sahifa</Link>
+                <Link href="/latest" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-700 transition-colors">Eng so&apos;nggi yangiliklar</Link>
+                <div className="my-2 border-t border-slate-100 dark:border-slate-700 pt-2">
                   <span className="text-xs uppercase tracking-wider text-slate-400 font-bold px-3">Kategoriyalar</span>
                   <div className="mt-2 flex flex-col gap-1">
                     {categories.map(cat => (
-                      <Link key={cat.id} href={`/category/${cat.slug}`} className="px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-red-700 rounded-md flex justify-between">
+                      <Link key={cat.id} href={`/category/${cat.slug}`} className="px-3 py-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-700 rounded-md flex justify-between transition-colors">
                         <span>{cat.name}</span>
                         <span className="text-xs text-slate-400 font-normal">{cat.articleCount}</span>
                       </Link>
                     ))}
                   </div>
                 </div>
-                <div className="my-2 border-t border-slate-100 pt-2 flex flex-col gap-1">
-                  <Link href="/about" className="px-3 py-2 rounded-md hover:bg-slate-100 hover:text-red-700">Biz haqimizda</Link>
-                  <Link href="/contact" className="px-3 py-2 rounded-md hover:bg-slate-100 hover:text-red-700">Aloqa</Link>
+                <div className="my-2 border-t border-slate-100 dark:border-slate-700 pt-2 flex flex-col gap-1">
+                  <Link href="/about" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-700 transition-colors">Biz haqimizda</Link>
+                  <Link href="/contact" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-700 transition-colors">Aloqa</Link>
                 </div>
               </nav>
             </div>
-            <div className="pt-4 border-t border-slate-200 flex flex-col gap-3">
-              <Link href="/admin/login" className="w-full text-center bg-slate-900 text-white font-bold py-2.5 rounded-md hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-sm">
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col gap-3">
+              <Link href="/admin/login" className="w-full text-center bg-slate-900 dark:bg-slate-800 text-white font-bold py-2.5 rounded-md hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2 text-sm">
                 <ShieldCheck className="w-4 h-4" /> Admin Paneli
               </Link>
               <p className="text-[11px] text-center text-slate-400">© 2026 Urgut Today</p>

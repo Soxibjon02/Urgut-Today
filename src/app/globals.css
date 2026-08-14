@@ -2,15 +2,120 @@
 
 /* =====================================================
    URGUT TODAY — Premium Editorial CSS System
+   Dark Mode fully supported via next-themes (.dark class)
    ===================================================== */
 
+/* ── Light Mode Tokens ──────────────────────────────── */
+:root {
+  --bg-primary:   #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card:      #ffffff;
+  --bg-header:    #ffffff;
+  --bg-topbar:    #0f172a;
+  --bg-catbar:    #f1f5f9;
+
+  --text-primary:   #0f172a;
+  --text-secondary: #334155;
+  --text-muted:     #64748b;
+  --text-topbar:    #cbd5e1;
+
+  --border-color:   #e2e8f0;
+  --border-dark:    #cbd5e1;
+
+  --shadow-card: 0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.06);
+  --shadow-hover: 0 12px 24px -6px rgba(15,23,42,0.14);
+
+  --skeleton-base:  #e2e8f0;
+  --skeleton-shine: #f1f5f9;
+}
+
+/* ── Dark Mode Tokens ───────────────────────────────── */
+.dark {
+  --bg-primary:   #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card:      #1c2128;
+  --bg-header:    #161b22;
+  --bg-topbar:    #0d1117;
+  --bg-catbar:    #161b22;
+
+  --text-primary:   #e6edf3;
+  --text-secondary: #c9d1d9;
+  --text-muted:     #8b949e;
+  --text-topbar:    #8b949e;
+
+  --border-color:   #30363d;
+  --border-dark:    #21262d;
+
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-hover: 0 12px 24px -6px rgba(0,0,0,0.5);
+
+  --skeleton-base:  #21262d;
+  --skeleton-shine: #30363d;
+}
+
+/* ── Base Styles ──────────────────────────────────────*/
 @layer base {
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     line-height: 1.5;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
+}
+
+/* ── Dark mode utility overrides ──────────────────── */
+.dark .bg-white          { background-color: var(--bg-card) !important; }
+.dark .bg-slate-50       { background-color: var(--bg-secondary) !important; }
+.dark .bg-slate-100      { background-color: var(--bg-secondary) !important; }
+.dark .bg-slate-900      { background-color: var(--bg-topbar) !important; }
+
+.dark .text-slate-900    { color: var(--text-primary) !important; }
+.dark .text-slate-800    { color: var(--text-primary) !important; }
+.dark .text-slate-700    { color: var(--text-secondary) !important; }
+.dark .text-slate-600    { color: var(--text-muted) !important; }
+.dark .text-slate-500    { color: var(--text-muted) !important; }
+.dark .text-slate-400    { color: var(--text-muted) !important; }
+.dark .text-slate-300    { color: var(--text-topbar) !important; }
+
+.dark .border-slate-200  { border-color: var(--border-color) !important; }
+.dark .border-slate-100  { border-color: var(--border-dark) !important; }
+.dark .border-slate-300  { border-color: var(--border-color) !important; }
+.dark .border-slate-800  { border-color: var(--border-dark) !important; }
+
+.dark .hover\:bg-slate-100:hover  { background-color: #21262d !important; }
+.dark .hover\:bg-slate-50:hover   { background-color: #21262d !important; }
+
+.dark .shadow-sm         { box-shadow: 0 1px 2px rgba(0,0,0,0.4) !important; }
+
+/* ── Header ──────────────────────────────────────── */
+.site-header {
+  background-color: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.topbar {
+  background-color: var(--bg-topbar);
+  transition: background-color 0.3s ease;
+}
+.catbar {
+  background-color: var(--bg-catbar);
+  border-top: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
+/* ── Cards ───────────────────────────────────────── */
+.news-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+              transform 0.25s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.news-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
 /* Editorial Title Typography */
@@ -18,18 +123,18 @@
   letter-spacing: -0.02em;
 }
 
-/* Card Hover Animations */
+/* Card Hover Animations (legacy compat) */
 .news-card-hover {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .news-card-hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.12);
+  box-shadow: var(--shadow-hover);
 }
 
-/* Article rich text styling */
+/* ── Article Content ────────────────────────────── */
 .article-content {
-  color: #334155;
+  color: var(--text-secondary);
   font-size: 1.125rem;
   line-height: 1.8;
 }
@@ -37,7 +142,7 @@
   margin-bottom: 1.25rem;
 }
 .article-content h2, .article-content h3 {
-  color: #0f172a;
+  color: var(--text-primary);
   font-weight: 800;
   margin-top: 2rem;
   margin-bottom: 0.75rem;
@@ -48,19 +153,44 @@
   border-left: 4px solid #b91c1c;
   padding-left: 1rem;
   font-style: italic;
-  color: #475569;
+  color: var(--text-muted);
   margin: 1.5rem 0;
 }
 
-/* Shimmer Loading Skeleton */
+/* ── Skeleton Loading ───────────────────────────── */
 @keyframes shimmer {
-  0% { background-position: -200px 0; }
+  0%   { background-position: -200px 0; }
   100% { background-position: calc(200px + 100%) 0; }
 }
-
 .skeleton {
-  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%);
   background-size: 400px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 0.375rem;
+}
+
+/* ── Mobile Drawer ─────────────────────────────── */
+.mobile-drawer {
+  background-color: var(--bg-card);
+  transition: background-color 0.3s ease;
+}
+.dark .mobile-drawer .border-slate-200 { border-color: var(--border-color) !important; }
+
+/* ── Dark mode Toggle button animation ─────────── */
+.theme-toggle {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.theme-toggle:hover {
+  transform: rotate(15deg) scale(1.1);
+}
+.theme-toggle svg {
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
 }

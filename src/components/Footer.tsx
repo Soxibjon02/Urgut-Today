@@ -32,7 +32,7 @@ export default function Footer() {
   }, [])
 
   return (
-    <footer className="bg-slate-900 text-slate-300 pt-12 pb-8 border-t-4 border-red-700 mt-16">
+    <footer className="bg-slate-900 dark:bg-[#0d1117] text-slate-300 pt-12 pb-8 border-t-4 border-red-700 mt-16 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         {/* Brand */}
         <div className="space-y-4">
@@ -65,23 +65,23 @@ export default function Footer() {
 
         {/* Navigation */}
         <div>
-          <h4 className="text-white font-bold text-base mb-4 border-b border-slate-800 pb-2">Bo'limlar</h4>
+          <h4 className="text-white font-bold text-base mb-4 border-b border-slate-800 dark:border-slate-700 pb-2">Bo&apos;limlar</h4>
           <ul className="space-y-2 text-sm">
             <li><Link href="/" className="hover:text-red-400 transition-colors">Bosh sahifa</Link></li>
-            <li><Link href="/latest" className="hover:text-red-400 transition-colors">Eng so'nggi yangiliklar</Link></li>
+            <li><Link href="/latest" className="hover:text-red-400 transition-colors">Eng so&apos;nggi yangiliklar</Link></li>
             <li><Link href="/category/urgut" className="hover:text-red-400 transition-colors">Urgut tuman yangiliklari</Link></li>
             <li><Link href="/category/iqtisodiyot" className="hover:text-red-400 transition-colors">Iqtisodiyot va Biznes</Link></li>
-            <li><Link href="/category/talim" className="hover:text-red-400 transition-colors">Ta'lim va IT</Link></li>
+            <li><Link href="/category/talim" className="hover:text-red-400 transition-colors">Ta&apos;lim va IT</Link></li>
           </ul>
         </div>
 
         {/* Links */}
         <div>
-          <h4 className="text-white font-bold text-base mb-4 border-b border-slate-800 pb-2">Ma'lumotlar</h4>
+          <h4 className="text-white font-bold text-base mb-4 border-b border-slate-800 dark:border-slate-700 pb-2">Ma&apos;lumotlar</h4>
           <ul className="space-y-2 text-sm">
             <li><Link href="/about" className="hover:text-red-400 transition-colors">Biz haqimizda</Link></li>
             <li><Link href="/contact" className="hover:text-red-400 transition-colors">Aloqa va Takliflar</Link></li>
-            <li><Link href="/category/elonlar" className="hover:text-red-400 transition-colors">E'lonlar va Bildirishnomalar</Link></li>
+            <li><Link href="/category/elonlar" className="hover:text-red-400 transition-colors">E&apos;lonlar va Bildirishnomalar</Link></li>
             <li>
               <Link href="/admin/login" className="text-amber-400 hover:underline flex items-center gap-1 mt-4">
                 <ShieldCheck className="w-4 h-4" /> Tahririyat Admin Paneli
@@ -92,18 +92,18 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <h4 className="text-white font-bold text-base mb-4 border-b border-slate-800 pb-2">Bog'lanish</h4>
+          <h4 className="text-white font-bold text-base mb-4 border-b border-slate-800 dark:border-slate-700 pb-2">Bog&apos;lanish</h4>
           <div className="space-y-3 text-sm text-slate-400">
             <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-red-500 shrink-0" /><span>{settings.phone}</span></p>
             <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-red-500 shrink-0" /><span>{settings.email}</span></p>
-            <p className="text-xs text-slate-500 mt-3 leading-relaxed">Manzil: Samarqand viloyati, Urgut tumani, Mustaqillik shoh ko'chasi.</p>
+            <p className="text-xs text-slate-500 mt-3 leading-relaxed">Manzil: Samarqand viloyati, Urgut tumani, Mustaqillik shoh ko&apos;chasi.</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 pt-6 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+      <div className="max-w-7xl mx-auto px-4 pt-6 border-t border-slate-800 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
         <p>© 2026 {settings.siteName}. Barcha huquqlar himoyalangan.</p>
-        <p>Materiallardan foydalanilganda Manba ko'rsatilishi shart.</p>
+        <p>Materiallardan foydalanilganda Manba ko&apos;rsatilishi shart.</p>
       </div>
     </footer>
   )
