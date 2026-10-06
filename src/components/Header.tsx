@@ -73,6 +73,10 @@ export default function Header({ onOpenBookmarks }: HeaderProps) {
   const [isCatDropdownOpen, setIsCatDropdownOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [bookmarkCount, setBookmarkCount] = useState(0)
+  const [widgets, setWidgets] = useState({
+    weather: { temp: '+18°C', condition: 'Ochiq havo', city: 'Urgut' },
+    currency: { usd: '12 850', diff: '' },
+  })
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
@@ -82,6 +86,14 @@ export default function Header({ onOpenBookmarks }: HeaderProps) {
   useEffect(() => {
     fetch('/api/categories').then((r) => r.json()).then(setCategories).catch(() => {})
     fetch('/api/settings').then((r) => r.json()).then(setSettings).catch(() => {})
+    fetch('/api/widgets')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.weather && data.currency) {
+          setWidgets(data)
+        }
+      })
+      .catch(() => {})
 
     const updateCount = () => setBookmarkCount(getBookmarks().length)
     updateCount()
@@ -131,12 +143,12 @@ export default function Header({ onOpenBookmarks }: HeaderProps) {
           <div className="flex items-center gap-4 text-slate-400">
             <span className="font-semibold text-slate-300">{todayFormatted}</span>
             <span className="text-slate-700">|</span>
-            <span className="flex items-center gap-1.5 hover:text-slate-200 transition-colors">
-              <CloudSun className="w-3.5 h-3.5 text-amber-400" /> Urgut +19°C
+            <span className="flex items-center gap-1.5 hover:text-slate-200 transition-colors" title={`${widgets.weather.city}: ${widgets.weather.condition}`}>
+              <CloudSun className="w-3.5 h-3.5 text-amber-400" /> {widgets.weather.city} {widgets.weather.temp}
             </span>
             <span className="text-slate-700">|</span>
-            <span className="flex items-center gap-1.5 hover:text-slate-200 transition-colors">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-400" /> USD: 12 850
+            <span className="flex items-center gap-1.5 hover:text-slate-200 transition-colors" title="Markaziy Bank rasmiy kursi">
+              <DollarSign className="w-3.5 h-3.5 text-emerald-400" /> USD: {widgets.currency.usd}
             </span>
           </div>
 

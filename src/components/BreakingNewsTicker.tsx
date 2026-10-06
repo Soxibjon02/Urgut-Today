@@ -2,17 +2,44 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Flame, CloudSun, DollarSign, Calendar, Sparkles } from 'lucide-react'
+import { Flame, CloudSun, DollarSign, Calendar } from 'lucide-react'
 
 interface QuickTickerProps {
   latestArticles?: { id: number; title: string; slug: string }[]
 }
 
+interface WidgetsData {
+  weather: {
+    temp: string
+    condition: string
+    city: string
+  }
+  currency: {
+    usd: string
+    diff: string
+  }
+}
+
 export function BreakingNewsTicker({ latestArticles = [] }: QuickTickerProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [timeStr, setTimeStr] = useState('')
+  const [widgets, setWidgets] = useState<WidgetsData>({
+    weather: { temp: '+18°C', condition: 'Ochiq havo', city: 'Urgut' },
+    currency: { usd: '12 850', diff: '' },
+  })
 
   useEffect(() => {
+    // 1. Fetch live online weather & CBU exchange rate
+    fetch('/api/widgets')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.weather && data.currency) {
+          setWidgets(data)
+        }
+      })
+      .catch(() => {})
+
+    // 2. Clock updater
     const updateTime = () => {
       const now = new Date()
       setTimeStr(
@@ -62,19 +89,29 @@ export function BreakingNewsTicker({ latestArticles = [] }: QuickTickerProps) {
           )}
         </div>
 
-        {/* Right: Weather & Currency & Time */}
+        {/* Right: Live Online Weather & Real CBU Currency & Time */}
         <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium shrink-0 self-end sm:self-auto overflow-x-auto max-w-full">
           <div className="hidden md:flex items-center gap-1 hover:text-slate-200 transition-colors">
             <Calendar className="w-3 h-3 text-red-500" />
             <span>{timeStr}</span>
           </div>
-          <div className="flex items-center gap-1 hover:text-slate-200 transition-colors">
+
+          <div
+            className="flex items-center gap-1 hover:text-slate-200 transition-colors"
+            title={`${widgets.weather.city}: ${widgets.weather.condition}`}
+          >
             <CloudSun className="w-3.5 h-3.5 text-amber-400" />
-            <span>Urgut +19°C</span>
+            <span>
+              {widgets.weather.city} {widgets.weather.temp}
+            </span>
           </div>
-          <div className="flex items-center gap-1 hover:text-slate-200 transition-colors">
+
+          <div
+            className="flex items-center gap-1 hover:text-slate-200 transition-colors"
+            title="O'zbekiston Respublikasi Markaziy Banki rasmiy kursi"
+          >
             <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-            <span>USD: 12 850</span>
+            <span>USD: {widgets.currency.usd}</span>
           </div>
         </div>
       </div>
