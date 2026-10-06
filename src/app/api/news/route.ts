@@ -42,6 +42,10 @@ export async function GET(req: NextRequest) {
   const categorySlug = searchParams.get('categorySlug') || ''
   const status = searchParams.get('status')
   const isFeatured = searchParams.get('isFeatured')
+  const datePreset = searchParams.get('datePreset') || searchParams.get('preset') || ''
+  const specificDate = searchParams.get('date') || ''
+  const startDate = searchParams.get('startDate') || ''
+  const endDate = searchParams.get('endDate') || ''
   const page = parseInt(searchParams.get('page') || '1')
   const pageSize = parseInt(searchParams.get('pageSize') || '10')
 
@@ -99,6 +103,37 @@ export async function GET(req: NextRequest) {
     }
 
     if (isFeatured === 'true') where.isFeatured = true
+
+    // Date filtering: today, yesterday, specific date, or date range
+    if (datePreset === 'today') {
+      const now = new Date()
+      const dStr = now.toISOString().split('T')[0]
+      where.publishedAt = {
+        gte: new Date(`${dStr}T00:00:00.000Z`),
+        lte: new Date(`${dStr}T23:59:59.999Z`),
+      }
+    } else if (datePreset === 'yesterday') {
+      const y = new Date()
+      y.setDate(y.getDate() - 1)
+      const dStr = y.toISOString().split('T')[0]
+      where.publishedAt = {
+        gte: new Date(`${dStr}T00:00:00.000Z`),
+        lte: new Date(`${dStr}T23:59:59.999Z`),
+      }
+    } else if (specificDate) {
+      where.publishedAt = {
+        gte: new Date(`${specificDate}T00:00:00.000Z`),
+        lte: new Date(`${specificDate}T23:59:59.999Z`),
+      }
+    } else if (startDate || endDate) {
+      where.publishedAt = {}
+      if (startDate) {
+        where.publishedAt.gte = new Date(`${startDate}T00:00:00.000Z`)
+      }
+      if (endDate) {
+        where.publishedAt.lte = new Date(`${endDate}T23:59:59.999Z`)
+      }
+    }
 
     const [items, totalItems] = await Promise.all([
       prisma.newsArticle.findMany({

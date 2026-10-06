@@ -1,13 +1,5 @@
-// Public pages layout with Header and Footer
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import { SiteShell } from '@/components/SiteShell'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </div>
-  )
+  return <SiteShell>{children}</SiteShell>
 }

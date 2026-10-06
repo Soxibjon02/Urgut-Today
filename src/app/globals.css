@@ -199,3 +199,25 @@
   transform: rotate(15deg) scale(1.1);
   background-color: var(--border-color);
 }
+
+/* ── Mobile Utilities & Scrollbars ──────────────────── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area padding for iPhones and modern devices */
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+}
+
+/* Smooth tap states for mobile */
+@media (hover: none) {
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+

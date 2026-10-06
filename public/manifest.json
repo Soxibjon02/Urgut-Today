@@ -1,0 +1,59 @@
+{
+  "name": "Urgut Today — Mahalliy Yangiliklar Portali",
+  "short_name": "Urgut Today",
+  "description": "Urgut tumani va Samarqand viloyatining eng so'nggi tezkor va ishonchli yangiliklari",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#0d1117",
+  "theme_color": "#b91c1c",
+  "orientation": "portrait-primary",
+  "lang": "uz",
+  "dir": "ltr",
+  "categories": ["news", "magazines", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bosh sahifa",
+      "short_name": "Asosiy",
+      "description": "Eng yangi xabarlar lentasi",
+      "url": "/",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Eng so'nggi yangiliklar",
+      "short_name": "So'nggi",
+      "description": "Barcha xabarlar ketma-ketligi",
+      "url": "/latest",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Qidiruv",
+      "short_name": "Qidiruv",
+      "description": "Urgut yangiliklaridan izlash",
+      "url": "/search",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

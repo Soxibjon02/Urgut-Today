@@ -7,18 +7,25 @@ export async function GET() {
   try {
     const settings = await prisma.siteSetting.findMany()
     const map: Record<string, string> = {}
-    settings.forEach((s: any) => { map[s.key] = s.value })
+    settings.forEach((s: any) => {
+      map[s.key] = s.value
+    })
 
     return NextResponse.json({
       siteName: map['siteName'] || 'Urgut Today',
       logoText: map['logoText'] || 'URGUT TODAY',
       subtitle: map['subtitle'] || 'Samarqand • Urgut tumani',
-      phone: map['phone'] || '+998 90 000 00 00',
+      phone: map['phone'] || '+998 90 123 45 67',
       email: map['email'] || 'info@urguttoday.uz',
+      address: map['address'] || 'Samarqand viloyati, Urgut tumani markazi',
       telegramUrl: map['telegramUrl'] || '',
       facebookUrl: map['facebookUrl'] || '',
       instagramUrl: map['instagramUrl'] || '',
+      youtubeUrl: map['youtubeUrl'] || '',
+      twitterUrl: map['twitterUrl'] || '',
+      tiktokUrl: map['tiktokUrl'] || '',
       footerText: map['footerText'] || 'Urgut tumani bo\'yicha ishonchli va tezkor axborot manbai.',
+      copyrightText: map['copyrightText'] || 'Barcha huquqlar himoyalangan.',
     })
   } catch (err) {
     console.error(err)
@@ -40,8 +47,8 @@ export async function PUT(req: NextRequest) {
       entries.map(([key, value]) =>
         prisma.siteSetting.upsert({
           where: { key },
-          update: { value: String(value) },
-          create: { key, value: String(value) },
+          update: { value: value === null || value === undefined ? '' : String(value) },
+          create: { key, value: value === null || value === undefined ? '' : String(value) },
         })
       )
     )

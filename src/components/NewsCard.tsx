@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Clock, Eye, ArrowRight, ImageOff } from 'lucide-react'
+import { Clock, Eye, ArrowRight, ImageOff, Bookmark, Share2, Check } from 'lucide-react'
+import { isBookmarked, toggleBookmark } from '@/lib/bookmarks'
 
 interface NewsArticle {
   id: number
@@ -29,7 +30,7 @@ function formatDate(dateStr: string) {
     const d = new Date(dateStr)
     return d.toLocaleDateString('uz-UZ', {
       day: 'numeric',
-      month: 'long',
+      month: 'short',
       year: 'numeric',
     })
   } catch {
@@ -42,9 +43,11 @@ function CoverImage({ src, alt, categoryName }: { src?: string; alt: string; cat
 
   if (!src || error) {
     return (
-      <div className="w-full h-full min-h-[160px] bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center p-4 text-center select-none">
+      <div className="w-full h-full min-h-[160px] bg-gradient-to-br from-slate-800 via-slate-900 to-red-950 flex flex-col items-center justify-center p-4 text-center select-none">
         <ImageOff className="w-8 h-8 text-slate-500 mb-2" />
-        <span className="text-red-400 font-extrabold text-xs uppercase tracking-wider mb-1">{categoryName}</span>
+        <span className="text-red-400 font-extrabold text-xs uppercase tracking-wider mb-1">
+          {categoryName}
+        </span>
         <span className="text-slate-300 text-xs font-semibold line-clamp-2 px-2">{alt}</span>
       </div>
     )
@@ -56,7 +59,7 @@ function CoverImage({ src, alt, categoryName }: { src?: string; alt: string; cat
       src={src}
       alt={alt}
       onError={() => setError(true)}
-      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       loading="lazy"
     />
   )
@@ -65,8 +68,8 @@ function CoverImage({ src, alt, categoryName }: { src?: string; alt: string; cat
 export function CategoryBadge({ name, size = 'sm' }: { name: string; size?: 'sm' | 'md' }) {
   return (
     <span
-      className={`inline-block bg-red-700 text-white font-extrabold rounded uppercase tracking-wider shadow-xs ${
-        size === 'sm' ? 'text-[10px] px-2 py-0.5' : 'text-xs px-2.5 py-1'
+      className={`inline-block bg-gradient-to-r from-red-700 to-red-600 text-white font-extrabold rounded-md uppercase tracking-wider shadow-xs ${
+        size === 'sm' ? 'text-[10px] px-2.5 py-0.5' : 'text-xs px-3 py-1'
       }`}
     >
       {name}
@@ -75,40 +78,91 @@ export function CategoryBadge({ name, size = 'sm' }: { name: string; size?: 'sm'
 }
 
 export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
+  const [saved, setSaved] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    setSaved(isBookmarked(article.id))
+    const handler = () => setSaved(isBookmarked(article.id))
+    window.addEventListener('bookmarks-updated', handler)
+    return () => window.removeEventListener('bookmarks-updated', handler)
+  }, [article.id])
+
+  const handleBookmark = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const next = toggleBookmark(article)
+    setSaved(next)
+  }
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/news/${article.slug}` : ''
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      navigator.share({
+        title: article.title,
+        text: article.shortDescription,
+        url,
+      }).catch(() => {})
+    } else if (typeof navigator !== 'undefined') {
+      navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
   // 1. FEATURED HERO CARD
   if (variant === 'featured') {
     return (
-      <article className="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col md:flex-row h-full">
-        <div className="md:w-3/5 relative min-h-[260px] md:min-h-[360px] bg-slate-900 overflow-hidden">
+      <article className="group bg-white dark:bg-[#1c2128] rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row h-full">
+        <div className="md:w-3/5 relative min-h-[260px] md:min-h-[380px] bg-slate-900 overflow-hidden">
           <Link href={`/news/${article.slug}`} className="block w-full h-full">
             <CoverImage src={article.coverImageUrl} alt={article.title} categoryName={article.categoryName} />
           </Link>
           <div className="absolute top-3 left-3 flex gap-2">
             <CategoryBadge name={article.categoryName} size="md" />
             {article.isFeatured && (
-              <span className="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded uppercase tracking-wider">
+              <span className="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded-md uppercase tracking-wider shadow-xs">
                 ASOSIY
               </span>
             )}
           </div>
+          {/* Quick Action buttons */}
+          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+            <button
+              onClick={handleBookmark}
+              className="p-2 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white transition-all transform active:scale-90"
+              title={saved ? "Saqlanganlardan o'chirish" : "Saqlab qo'yish"}
+            >
+              <Bookmark className={`w-4 h-4 ${saved ? 'fill-red-500 text-red-500' : ''}`} />
+            </button>
+            <button
+              onClick={handleShare}
+              className="p-2 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white transition-all transform active:scale-90"
+              title="Ulashish"
+            >
+              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
 
-        <div className="md:w-2/5 p-6 md:p-8 flex flex-col justify-between bg-white">
+        <div className="md:w-2/5 p-6 md:p-8 flex flex-col justify-between bg-white dark:bg-[#1c2128]">
           <div>
             <Link href={`/news/${article.slug}`}>
-              <h2 className="text-xl md:text-2xl font-black text-slate-900 group-hover:text-red-700 transition-colors leading-tight mb-3">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors leading-tight mb-3">
                 {article.title}
               </h2>
             </Link>
-            <p className="text-slate-600 text-xs md:text-sm line-clamp-4 leading-relaxed mb-6">
+            <p className="text-slate-600 dark:text-slate-300 text-xs md:text-sm line-clamp-4 leading-relaxed mb-6">
               {article.shortDescription}
             </p>
           </div>
 
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 font-medium">
-                <Clock className="w-3.5 h-3.5 text-red-700" />
+                <Clock className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                 {formatDate(article.publishedAt)}
               </span>
               <span className="flex items-center gap-1">
@@ -118,7 +172,7 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
             </div>
             <Link
               href={`/news/${article.slug}`}
-              className="inline-flex items-center gap-1 font-extrabold text-red-700 hover:text-red-800 transition-colors"
+              className="inline-flex items-center gap-1 font-extrabold text-red-700 dark:text-red-400 hover:text-red-800 transition-colors"
             >
               Batafsil <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -131,8 +185,8 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
   // 2. COMPACT SIDEBAR CARD
   if (variant === 'compact') {
     return (
-      <article className="group flex gap-3 py-3 border-b border-slate-700/60 last:border-0 items-start">
-        <div className="w-20 h-16 shrink-0 rounded overflow-hidden bg-slate-900 relative">
+      <article className="group flex gap-3 py-3 border-b border-slate-800/80 last:border-0 items-start">
+        <div className="w-20 h-16 shrink-0 rounded-lg overflow-hidden bg-slate-900 relative">
           <Link href={`/news/${article.slug}`}>
             <CoverImage src={article.coverImageUrl} alt={article.title} categoryName={article.categoryName} />
           </Link>
@@ -142,14 +196,14 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
             <span className="text-[10px] font-extrabold uppercase text-red-400 tracking-wider">
               {article.categoryName}
             </span>
-            <span className="text-[10px] text-slate-500">•</span>
+            <span className="text-[10px] text-slate-600">•</span>
             <span className="text-[10px] text-slate-400 flex items-center gap-1">
               <Clock className="w-3 h-3" />
               {formatDate(article.publishedAt)}
             </span>
           </div>
           <Link href={`/news/${article.slug}`}>
-            <h4 className="text-xs md:text-sm font-bold text-white group-hover:text-red-400 transition-colors line-clamp-2 leading-snug">
+            <h4 className="text-xs md:text-sm font-bold text-slate-100 group-hover:text-red-400 transition-colors line-clamp-2 leading-snug">
               {article.title}
             </h4>
           </Link>
@@ -160,32 +214,49 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
 
   // 3. STANDARD GRID CARD
   return (
-    <article className="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs news-card-hover flex flex-col h-full">
+    <article className="group bg-white dark:bg-[#1c2128] rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col h-full hover:-translate-y-1">
       <div className="relative aspect-[16/9] overflow-hidden bg-slate-900">
         <Link href={`/news/${article.slug}`}>
           <CoverImage src={article.coverImageUrl} alt={article.title} categoryName={article.categoryName} />
         </Link>
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-2.5 left-2.5">
           <CategoryBadge name={article.categoryName} size="sm" />
+        </div>
+        {/* Floating card action buttons */}
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={handleBookmark}
+            className="p-1.5 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-xs text-white transition-all transform active:scale-90"
+            title={saved ? "Saqlanganlardan o'chirish" : "Saqlab qo'yish"}
+          >
+            <Bookmark className={`w-3.5 h-3.5 ${saved ? 'fill-red-500 text-red-500' : ''}`} />
+          </button>
+          <button
+            onClick={handleShare}
+            className="p-1.5 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-xs text-white transition-all transform active:scale-90"
+            title="Ulashish"
+          >
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+          </button>
         </div>
       </div>
 
       <div className="p-4 md:p-5 flex flex-col justify-between flex-1">
         <div>
           <Link href={`/news/${article.slug}`}>
-            <h3 className="text-sm md:text-base font-extrabold text-slate-900 group-hover:text-red-700 transition-colors line-clamp-2 leading-snug mb-2">
+            <h3 className="text-sm md:text-base font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-snug mb-2">
               {article.title}
             </h3>
           </Link>
-          <p className="text-slate-600 text-xs line-clamp-2 leading-relaxed mb-4">
+          <p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-2 leading-relaxed mb-4">
             {article.shortDescription}
           </p>
         </div>
 
-        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 mt-auto">
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mt-auto">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1 font-medium text-[11px]">
-              <Clock className="w-3 h-3 text-red-700" />
+              <Clock className="w-3 h-3 text-red-600 dark:text-red-400" />
               {formatDate(article.publishedAt)}
             </span>
             <span className="flex items-center gap-1 text-[11px]">
@@ -195,7 +266,7 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
           </div>
           <Link
             href={`/news/${article.slug}`}
-            className="inline-flex items-center gap-1 font-extrabold text-xs text-red-700 hover:underline"
+            className="inline-flex items-center gap-1 font-extrabold text-xs text-red-700 dark:text-red-400 hover:text-red-800 transition-colors"
           >
             Batafsil
           </Link>

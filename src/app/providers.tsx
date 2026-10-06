@@ -1,6 +1,7 @@
 'use client'
 
 import { ThemeProvider } from 'next-themes'
+import { PWAProvider } from '@/components/PWAContext'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -10,7 +11,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange={false}
     >
-      {children}
+      <PWAProvider>{children}</PWAProvider>
     </ThemeProvider>
   )
 }

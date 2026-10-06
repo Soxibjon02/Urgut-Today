@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:icons": "node scripts/generate-icons.js",
+    "desktop": "electron electron/main.js"
   },
   "dependencies": {
     "@prisma/client": "5.22.0",
