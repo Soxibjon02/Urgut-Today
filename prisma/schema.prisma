@@ -29,29 +29,54 @@ model Category {
 }
 
 model NewsArticle {
-  id               Int       @id @default(autoincrement())
+  id               Int           @id @default(autoincrement())
   title            String
-  slug             String    @unique
+  slug             String        @unique
   shortDescription String
   content          String
   coverImageUrl    String?
-  additionalImages String[]  @default([])
+  additionalImages String[]      @default([])
   categoryId       Int
-  category         Category  @relation(fields: [categoryId], references: [id])
+  category         Category      @relation(fields: [categoryId], references: [id])
   author           String?
   sourceUrl        String?
   videoUrl         String?
-  status           Int       @default(0)
-  isFeatured       Boolean   @default(false)
-  tags             String[]  @default([])
-  viewCount        Int       @default(0)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  publishedAt      DateTime  @default(now())
+  status           Int           @default(0)
+  isFeatured       Boolean       @default(false)
+  tags             String[]      @default([])
+  viewCount        Int           @default(0)
+  likeCount        Int           @default(0)
+  likes            ArticleLike[]
+  comments         Comment[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  publishedAt      DateTime      @default(now())
+}
+
+model ArticleLike {
+  id         Int         @id @default(autoincrement())
+  articleId  Int
+  article    NewsArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  identifier String
+  createdAt  DateTime    @default(now())
+
+  @@unique([articleId, identifier])
+}
+
+model Comment {
+  id          Int         @id @default(autoincrement())
+  articleId   Int
+  article     NewsArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  authorName  String
+  authorEmail String
+  authorImage String?
+  content     String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model SiteSetting {
-  id           Int    @id @default(autoincrement())
-  key          String @unique
-  value        String
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
 }

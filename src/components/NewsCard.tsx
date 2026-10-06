@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Clock, Eye, ArrowRight, ImageOff, Bookmark, Share2, Check } from 'lucide-react'
+import { Clock, Eye, ArrowRight, ImageOff, Bookmark, Share2, Check, Heart } from 'lucide-react'
 import { isBookmarked, toggleBookmark } from '@/lib/bookmarks'
 
 interface NewsArticle {
@@ -17,6 +17,7 @@ interface NewsArticle {
   status: number
   isFeatured: boolean
   viewCount: number
+  likeCount?: number
   publishedAt: string
 }
 
@@ -169,6 +170,10 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
                 <Eye className="w-3.5 h-3.5 text-slate-400" />
                 {article.viewCount}
               </span>
+              <span className="flex items-center gap-1 text-rose-600 dark:text-rose-400 font-semibold">
+                <Heart className="w-3.5 h-3.5 fill-rose-600/30 text-rose-600" />
+                {article.likeCount || 0}
+              </span>
             </div>
             <Link
               href={`/news/${article.slug}`}
@@ -262,6 +267,10 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
             <span className="flex items-center gap-1 text-[11px]">
               <Eye className="w-3 h-3 text-slate-400" />
               {article.viewCount}
+            </span>
+            <span className="flex items-center gap-1 text-[11px] text-rose-600 dark:text-rose-400 font-semibold">
+              <Heart className="w-3 h-3 fill-rose-600/30 text-rose-600" />
+              {article.likeCount || 0}
             </span>
           </div>
           <Link

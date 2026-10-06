@@ -17,6 +17,8 @@ import {
 } from 'lucide-react'
 import { NewsCard, CategoryBadge } from '@/components/NewsCard'
 import { isBookmarked, toggleBookmark } from '@/lib/bookmarks'
+import { LikeButton } from '@/components/LikeButton'
+import { CommentsSection } from '@/components/CommentsSection'
 
 interface ArticleDetail {
   id: number
@@ -36,6 +38,7 @@ interface ArticleDetail {
   isFeatured: boolean
   tags: string[]
   viewCount: number
+  likeCount: number
   createdAt: string
   updatedAt: string
   publishedAt: string
@@ -54,6 +57,7 @@ interface ArticleList {
   status: number
   isFeatured: boolean
   viewCount: number
+  likeCount?: number
   publishedAt: string
 }
 
@@ -206,6 +210,8 @@ export default function ArticleDetailPage() {
 
           {/* Top Quick Actions */}
           <div className="flex items-center gap-2">
+            <LikeButton slug={article.slug} initialCount={article.likeCount} size="md" />
+
             <button
               onClick={handleBookmark}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1c2128] text-xs font-bold hover:text-red-600 transition-all shadow-xs"
@@ -254,6 +260,7 @@ export default function ArticleDetailPage() {
                 <Eye className="w-3.5 h-3.5 text-red-600" />
                 {article.viewCount} ko&apos;rishlar
               </span>
+              <LikeButton slug={article.slug} initialCount={article.likeCount} size="sm" showText={false} />
             </div>
           </div>
 
@@ -299,9 +306,12 @@ export default function ArticleDetailPage() {
 
           {/* Article Footer & Social Share */}
           <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-xs text-slate-500 font-semibold">
-              Ushbu xabarni do&apos;stlaringizga ulashing:
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-500 font-semibold">
+                Sizga yoqdimi?
+              </span>
+              <LikeButton slug={article.slug} initialCount={article.likeCount} size="md" />
+            </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleTelegramShare}
@@ -319,6 +329,9 @@ export default function ArticleDetailPage() {
             </div>
           </div>
         </article>
+
+        {/* ── COMMENTS & DISCUSSION SECTION (Google Sign-In) ── */}
+        <CommentsSection slug={article.slug} articleTitle={article.title} />
 
         {/* Related News */}
         {related.length > 0 && (

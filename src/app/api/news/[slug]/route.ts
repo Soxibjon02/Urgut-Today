@@ -40,6 +40,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       isFeatured: article.isFeatured,
       tags: article.tags,
       viewCount: article.viewCount + 1,
+      likeCount: article.likeCount || 0,
       createdAt: article.createdAt,
       updatedAt: article.updatedAt,
       publishedAt: article.publishedAt,

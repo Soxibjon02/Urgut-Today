@@ -14,6 +14,7 @@ const newsSelect = {
   status: true,
   isFeatured: true,
   viewCount: true,
+  likeCount: true,
   publishedAt: true,
 }
 
@@ -31,6 +32,7 @@ function mapArticle(a: any) {
     status: a.status,
     isFeatured: a.isFeatured,
     viewCount: a.viewCount,
+    likeCount: a.likeCount || 0,
     publishedAt: a.publishedAt,
   }
 }
