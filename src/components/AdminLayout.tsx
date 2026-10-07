@@ -13,6 +13,7 @@ import {
   X,
   ExternalLink,
   ShieldCheck,
+  LayoutGrid,
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -35,7 +36,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navItems = [
     { label: 'Boshqaruv Paneli', href: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'Yangiliklar Boshqaruvi', href: '/admin/news', icon: Newspaper },
-    { label: 'Kategoriyalar', href: '/admin/categories', icon: FolderTree },
+    { label: 'Kategoriyalar va Dizayn', href: '/admin/categories', icon: FolderTree },
+    { label: 'Sahifa Joylashuvi', href: '/admin/layout', icon: LayoutGrid },
     { label: 'Sayt Sozlamalari', href: '/admin/settings', icon: Settings },
   ];
 

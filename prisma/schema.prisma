@@ -25,6 +25,7 @@ model Category {
   slug         String         @unique
   description  String         @default("")
   order        Int            @default(0)
+  layoutType   String         @default("bbc-lead")
   articles     NewsArticle[]
 }
 

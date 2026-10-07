@@ -10,11 +10,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     await verifyToken(token)
 
     const { id } = await params
-    const { name, description, order } = await req.json()
+    const { name, description, order, layoutType } = await req.json()
+
+    const updateData: any = { name, description, order }
+    if (layoutType !== undefined) {
+      updateData.layoutType = layoutType
+    }
 
     const updated = await prisma.category.update({
       where: { id: Number(id) },
-      data: { name, description, order },
+      data: updateData,
     })
 
     return NextResponse.json(updated)

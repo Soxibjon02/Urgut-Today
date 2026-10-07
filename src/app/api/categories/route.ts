@@ -17,6 +17,7 @@ export async function GET() {
         slug: c.slug,
         description: c.description,
         order: c.order,
+        layoutType: c.layoutType || 'bbc-lead',
         articleCount: c._count.articles,
       }))
     )
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
     if (!token) return NextResponse.json({ error: 'Ruxsat yo\'q' }, { status: 401 })
     await verifyToken(token)
 
-    const { name, description, order } = await req.json()
+    const { name, description, order, layoutType } = await req.json()
     if (!name) return NextResponse.json({ error: 'Nom kiritilishi shart' }, { status: 400 })
 
     const slug = name
@@ -44,7 +45,13 @@ export async function POST(req: NextRequest) {
       .trim()
 
     const category = await prisma.category.create({
-      data: { name, slug, description: description || '', order: order || 0 },
+      data: {
+        name,
+        slug,
+        description: description || '',
+        order: order || 0,
+        layoutType: layoutType || 'bbc-lead',
+      },
     })
 
     return NextResponse.json({ ...category, articleCount: 0 }, { status: 201 })
