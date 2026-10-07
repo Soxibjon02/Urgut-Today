@@ -9,7 +9,8 @@ const newsSelect = {
   shortDescription: true,
   coverImageUrl: true,
   categoryId: true,
-  category: { select: { name: true, slug: true } },
+  category: { select: { id: true, name: true, slug: true } },
+  categories: { select: { id: true, name: true, slug: true } },
   author: true,
   status: true,
   isFeatured: true,
@@ -19,15 +20,24 @@ const newsSelect = {
 }
 
 function mapArticle(a: any) {
+  const cats: Array<{ id: number; name: string; slug: string }> =
+    Array.isArray(a.categories) && a.categories.length > 0
+      ? a.categories
+      : a.category
+      ? [a.category]
+      : []
+  const primary = cats[0] || { id: 0, name: 'Umumiy', slug: 'umumiy' }
+
   return {
     id: a.id,
     title: a.title,
     slug: a.slug,
     shortDescription: a.shortDescription,
     coverImageUrl: a.coverImageUrl,
-    categoryId: a.categoryId,
-    categoryName: a.category.name,
-    categorySlug: a.category.slug,
+    categoryId: primary.id,
+    categoryName: primary.name,
+    categorySlug: primary.slug,
+    categories: cats,
     author: a.author || 'Urgut Today Tahririyati',
     status: a.status,
     isFeatured: a.isFeatured,
@@ -101,7 +111,10 @@ export async function GET(req: NextRequest) {
     }
 
     if (categorySlug) {
-      where.category = { slug: { equals: categorySlug, mode: 'insensitive' } }
+      where.OR = [
+        { category: { slug: { equals: categorySlug, mode: 'insensitive' } } },
+        { categories: { some: { slug: { equals: categorySlug, mode: 'insensitive' } } } },
+      ]
     }
 
     if (isFeatured === 'true') where.isFeatured = true
@@ -171,12 +184,16 @@ export async function POST(req: NextRequest) {
     const data = await req.json()
     const {
       title, shortDescription, content, coverImageUrl,
-      additionalImages, categoryId, author, sourceUrl,
+      additionalImages, categoryId, categoryIds, author, sourceUrl,
       videoUrl, status, isFeatured, tags,
     } = data
 
-    if (!title || !shortDescription || !content || !categoryId) {
-      return NextResponse.json({ error: 'Majburiy maydonlar to\'ldirilmagan' }, { status: 400 })
+    const selectedCategoryIds: number[] = Array.isArray(categoryIds) && categoryIds.length > 0
+      ? categoryIds.map(Number)
+      : categoryId ? [Number(categoryId)] : []
+
+    if (!title || !shortDescription || !content || selectedCategoryIds.length === 0) {
+      return NextResponse.json({ error: 'Majburiy maydonlar to\'ldirilmagan yoki bo\'lim tanlanmagan' }, { status: 400 })
     }
 
     // Generate unique slug
@@ -199,7 +216,10 @@ export async function POST(req: NextRequest) {
         content,
         coverImageUrl: coverImageUrl || null,
         additionalImages: additionalImages || [],
-        categoryId: Number(categoryId),
+        categoryId: selectedCategoryIds[0],
+        categories: {
+          connect: selectedCategoryIds.map((id) => ({ id })),
+        },
         author: author || null,
         sourceUrl: sourceUrl || null,
         videoUrl: videoUrl || null,
@@ -208,10 +228,10 @@ export async function POST(req: NextRequest) {
         tags: tags || [],
         publishedAt: new Date(),
       },
-      include: { category: true },
+      include: { category: true, categories: true },
     })
 
-    return NextResponse.json(article, { status: 201 })
+    return NextResponse.json(mapArticle(article), { status: 201 })
   } catch (err) {
     console.error(err)
     return NextResponse.json({ error: 'Server xatosi' }, { status: 500 })

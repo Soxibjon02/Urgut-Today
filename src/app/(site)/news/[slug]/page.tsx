@@ -31,6 +31,7 @@ interface ArticleDetail {
   categoryId: number
   categoryName: string
   categorySlug: string
+  categories?: Array<{ id: number; name: string; slug: string }>
   author?: string
   sourceUrl?: string
   videoUrl?: string
@@ -232,10 +233,18 @@ export default function ArticleDetailPage() {
 
         <article className="bg-white dark:bg-[#1c2128] rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-8 md:p-10 shadow-sm space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <Link href={`/category/${article.categorySlug}`}>
-                <CategoryBadge name={article.categoryName} size="md" />
-              </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              {article.categories && article.categories.length > 0 ? (
+                article.categories.map((cat) => (
+                  <Link key={cat.slug} href={`/category/${cat.slug}`}>
+                    <CategoryBadge name={cat.name} size="md" />
+                  </Link>
+                ))
+              ) : (
+                <Link href={`/category/${article.categorySlug}`}>
+                  <CategoryBadge name={article.categoryName} size="md" />
+                </Link>
+              )}
               {article.isFeatured && (
                 <span className="bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 font-bold text-xs px-2.5 py-1 rounded-md">
                   Asosiy Xabar

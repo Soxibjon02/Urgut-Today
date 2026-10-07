@@ -14,6 +14,7 @@ interface ArticleList {
   categoryId: number;
   categoryName: string;
   categorySlug: string;
+  categories?: Array<{ id: number; name: string; slug: string }>;
   author: string;
   status: number;
   isFeatured: boolean;
@@ -179,7 +180,22 @@ export default function AdminNewsListPage() {
                   {articles.map((art) => (
                     <tr key={art.id} className="hover:bg-slate-50">
                       <td className="p-3 font-bold text-slate-900 max-w-xs truncate">{art.title}</td>
-                      <td className="p-3 font-semibold text-slate-600">{art.categoryName}</td>
+                      <td className="p-3">
+                        <div className="flex flex-wrap gap-1 max-w-xs">
+                          {art.categories && art.categories.length > 0 ? (
+                            art.categories.map((c) => (
+                              <span
+                                key={c.id}
+                                className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200"
+                              >
+                                {c.name}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="font-semibold text-slate-600">{art.categoryName}</span>
+                          )}
+                        </div>
+                      </td>
                       <td className="p-3">
                         <button
                           onClick={() => handleToggleStatus(art.id, art.status)}

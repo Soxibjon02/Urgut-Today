@@ -13,6 +13,7 @@ interface NewsArticle {
   coverImageUrl?: string
   categoryName: string
   categorySlug: string
+  categories?: Array<{ id: number; name: string; slug: string }>
   author?: string
   status: number
   isFeatured: boolean
@@ -121,8 +122,14 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
           <Link href={`/news/${article.slug}`} className="block w-full h-full">
             <CoverImage src={article.coverImageUrl} alt={article.title} categoryName={article.categoryName} />
           </Link>
-          <div className="absolute top-3 left-3 flex gap-2">
-            <CategoryBadge name={article.categoryName} size="md" />
+          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[85%]">
+            {article.categories && article.categories.length > 0 ? (
+              article.categories.map((c) => (
+                <CategoryBadge key={c.slug} name={c.name} size="sm" />
+              ))
+            ) : (
+              <CategoryBadge name={article.categoryName} size="md" />
+            )}
             {article.isFeatured && (
               <span className="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded-md uppercase tracking-wider shadow-xs">
                 ASOSIY
@@ -224,8 +231,14 @@ export function NewsCard({ article, variant = 'standard' }: NewsCardProps) {
         <Link href={`/news/${article.slug}`}>
           <CoverImage src={article.coverImageUrl} alt={article.title} categoryName={article.categoryName} />
         </Link>
-        <div className="absolute top-2.5 left-2.5">
-          <CategoryBadge name={article.categoryName} size="sm" />
+        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1 max-w-[85%]">
+          {article.categories && article.categories.length > 0 ? (
+            article.categories.map((c) => (
+              <CategoryBadge key={c.slug} name={c.name} size="sm" />
+            ))
+          ) : (
+            <CategoryBadge name={article.categoryName} size="sm" />
+          )}
         </div>
         {/* Floating card action buttons */}
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">

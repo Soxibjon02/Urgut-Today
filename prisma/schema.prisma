@@ -26,7 +26,8 @@ model Category {
   description  String         @default("")
   order        Int            @default(0)
   layoutType   String         @default("bbc-lead")
-  articles     NewsArticle[]
+  articles     NewsArticle[]  @relation("ArticleCategories")
+  legacyArticles NewsArticle[] @relation("LegacyCategory")
 }
 
 model NewsArticle {
@@ -37,8 +38,9 @@ model NewsArticle {
   content          String
   coverImageUrl    String?
   additionalImages String[]      @default([])
-  categoryId       Int
-  category         Category      @relation(fields: [categoryId], references: [id])
+  categoryId       Int?
+  category         Category?     @relation("LegacyCategory", fields: [categoryId], references: [id])
+  categories       Category[]    @relation("ArticleCategories")
   author           String?
   sourceUrl        String?
   videoUrl         String?

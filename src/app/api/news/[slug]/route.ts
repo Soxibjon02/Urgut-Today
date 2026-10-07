@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   try {
     const article = await prisma.newsArticle.findUnique({
       where: { slug },
-      include: { category: true },
+      include: { category: true, categories: true },
     })
 
     if (!article || article.status !== 1) {
@@ -22,6 +22,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       data: { viewCount: { increment: 1 } },
     })
 
+    const cats: Array<{ id: number; name: string; slug: string }> =
+      Array.isArray(article.categories) && article.categories.length > 0
+        ? article.categories
+        : article.category
+        ? [article.category]
+        : []
+    const primary = cats[0] || { id: 0, name: 'Umumiy', slug: 'umumiy' }
+
     return NextResponse.json({
       id: article.id,
       title: article.title,
@@ -30,9 +38,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       content: article.content,
       coverImageUrl: article.coverImageUrl,
       additionalImages: article.additionalImages,
-      categoryId: article.categoryId,
-      categoryName: article.category.name,
-      categorySlug: article.category.slug,
+      categoryId: primary.id,
+      categoryName: primary.name,
+      categorySlug: primary.slug,
+      categories: cats,
+      categoryIds: cats.map((c) => c.id),
       author: article.author,
       sourceUrl: article.sourceUrl,
       videoUrl: article.videoUrl,
@@ -61,22 +71,35 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug
     const { slug } = await params
     const data = await req.json()
 
+    const selectedCategoryIds: number[] = Array.isArray(data.categoryIds) && data.categoryIds.length > 0
+      ? data.categoryIds.map(Number)
+      : data.categoryId ? [Number(data.categoryId)] : []
+
+    const updateData: any = {
+      title: data.title,
+      shortDescription: data.shortDescription,
+      content: data.content,
+      coverImageUrl: data.coverImageUrl || null,
+      additionalImages: data.additionalImages || [],
+      author: data.author || null,
+      sourceUrl: data.sourceUrl || null,
+      videoUrl: data.videoUrl || null,
+      status: Number(data.status),
+      isFeatured: Boolean(data.isFeatured),
+      tags: data.tags || [],
+    }
+
+    if (selectedCategoryIds.length > 0) {
+      updateData.categoryId = selectedCategoryIds[0]
+      updateData.categories = {
+        set: selectedCategoryIds.map((id) => ({ id })),
+      }
+    }
+
     const updated = await prisma.newsArticle.update({
       where: { id: Number(slug) },
-      data: {
-        title: data.title,
-        shortDescription: data.shortDescription,
-        content: data.content,
-        coverImageUrl: data.coverImageUrl || null,
-        additionalImages: data.additionalImages || [],
-        categoryId: Number(data.categoryId),
-        author: data.author || null,
-        sourceUrl: data.sourceUrl || null,
-        videoUrl: data.videoUrl || null,
-        status: Number(data.status),
-        isFeatured: Boolean(data.isFeatured),
-        tags: data.tags || [],
-      },
+      data: updateData,
+      include: { category: true, categories: true },
     })
 
     return NextResponse.json(updated)
