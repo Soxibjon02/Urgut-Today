@@ -71,6 +71,12 @@ export default function AdminPageLayoutPage() {
     setBlocks(updated)
   }
 
+  const toggleSideList = (index: number) => {
+    const updated = [...blocks]
+    updated[index].showSideList = !updated[index].showSideList
+    setBlocks(updated)
+  }
+
   const changeStyle = (index: number, style: LayoutType) => {
     const updated = [...blocks]
     updated[index].style = style
@@ -279,6 +285,25 @@ export default function AdminPageLayoutPage() {
                         ))}
                       </select>
                     </div>
+                  )}
+
+                  {/* Hero side list toggle */}
+                  {block.type === 'hero' && (
+                    <button
+                      type="button"
+                      onClick={() => toggleSideList(idx)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                        block.showSideList
+                          ? 'bg-red-50 text-red-700 border border-red-200'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                      title="Asosiy yangilik yonidagi qo'shimcha tahlil panelini ko'rsatish yoki yashirish"
+                    >
+                      <span className="text-[11px]">Yon tahlil qatori:</span>
+                      <span className="font-extrabold text-[11px]">
+                        {block.showSideList ? 'Yoqilgan' : 'O‘chirilgan'}
+                      </span>
+                    </button>
                   )}
 
                   {/* Item count for latest news */}

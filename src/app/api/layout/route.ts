@@ -8,6 +8,7 @@ export interface LayoutBlock {
   title: string
   enabled: boolean
   style: 'bbc-lead' | 'cnn-magazine' | 'editorial-sidebar' | 'cards-grid' | 'compact-list' | 'standard'
+  showSideList?: boolean
   categoryId?: number
   categorySlug?: string
   itemCount?: number
@@ -20,6 +21,7 @@ export const DEFAULT_HOMEPAGE_LAYOUT: LayoutBlock[] = [
     title: 'Asosiy Yangilik (Hero Lead)',
     enabled: true,
     style: 'bbc-lead',
+    showSideList: false,
   },
   {
     id: 'block_date_filter',

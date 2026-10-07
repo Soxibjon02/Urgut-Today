@@ -201,34 +201,40 @@ export default function HomePage() {
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
                     </span>
                     <span className="text-xs font-black uppercase tracking-widest text-red-500 flex items-center gap-1">
-                      <Flame className="w-4 h-4" /> ASOSIY YANGILIK (BBC LEAD)
+                      <Flame className="w-4 h-4" /> ASOSIY YANGILIK
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
-                    <div className="lg:col-span-8">
+                  {block.showSideList ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
+                      <div className="lg:col-span-8">
+                        <NewsCard article={mainHero} variant="featured" />
+                      </div>
+
+                      <div className="lg:col-span-4 bg-slate-900/90 rounded-2xl p-5 border border-slate-800 flex flex-col justify-between shadow-inner">
+                        <div>
+                          <h3 className="text-xs font-black uppercase tracking-wider text-slate-300 border-b border-slate-800 pb-3 mb-3 flex items-center gap-2">
+                            <TrendingUp className="w-4 h-4 text-red-500" /> MUHIM VOQEALAR
+                          </h3>
+                          <div className="divide-y divide-slate-800/80">
+                            {secondary.map((art) => (
+                              <NewsCard key={art.id} article={art} variant="compact" />
+                            ))}
+                          </div>
+                        </div>
+                        <Link
+                          href="/latest"
+                          className="mt-4 block w-full text-center bg-red-700 hover:bg-red-800 text-white font-bold text-xs py-3 rounded-xl transition-colors uppercase tracking-wider shadow-sm"
+                        >
+                          Barcha muhim xabarlarni ko&apos;rish →
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full">
                       <NewsCard article={mainHero} variant="featured" />
                     </div>
-
-                    <div className="lg:col-span-4 bg-slate-900/90 rounded-2xl p-5 border border-slate-800 flex flex-col justify-between shadow-inner">
-                      <div>
-                        <h3 className="text-xs font-black uppercase tracking-wider text-slate-300 border-b border-slate-800 pb-3 mb-3 flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-red-500" /> MUHIM VOQEALAR
-                        </h3>
-                        <div className="divide-y divide-slate-800/80">
-                          {secondary.map((art) => (
-                            <NewsCard key={art.id} article={art} variant="compact" />
-                          ))}
-                        </div>
-                      </div>
-                      <Link
-                        href="/latest"
-                        className="mt-4 block w-full text-center bg-red-700 hover:bg-red-800 text-white font-bold text-xs py-3 rounded-xl transition-colors uppercase tracking-wider shadow-sm"
-                      >
-                        Barcha muhim xabarlarni ko&apos;rish →
-                      </Link>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </section>
             )
